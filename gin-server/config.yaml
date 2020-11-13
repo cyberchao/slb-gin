@@ -1,0 +1,9 @@
+# mysql connect configuration
+mysql:
+  path: '127.0.0.1:3306'
+  db-name: 'slb-admin'
+  username: 'root'
+  password: 'pangru123'
+  max-idle-conns: 10
+  max-open-conns: 10
+  log-mode: false
