@@ -1,33 +1,27 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"net/http"
-	"slb-admin/model/request"
+	"slb-admin/global"
+	"slb-admin/global/response"
+	"slb-admin/model"
 	"slb-admin/service"
 )
-type Response struct {
-	Code int         `json:"code"`
-	Data interface{} `json:"data"`
-	Msg  string      `json:"msg"`
-}
-func response(code int, data interface{}, msg string, c *gin.Context) {
-	// 开始时间
-	c.JSON(http.StatusOK, Response{
-		code,
-		data,
-		msg,
-	})
-}
+
 func GetMenu(c *gin.Context) {
-	claims, _ := c.Get("claims")
-	waitUse := claims.(*request.CustomClaims)
-	err, menus := service.GetMenuTree(waitUse.AuthorityId)
-	if err != nil {
-		response(1, "", "fail",c)
-	} else {
-		response(0, menus, "操作成功",c)
+	type MenusResponse struct {
+		Menus []model.Menu `json:"menus"`
 	}
 
+	username := c.Request.Header.Get("x-username")
+	var user model.User
+	global.DB.Where("username = ?", username).First(&user)
+	err, menus := service.GetMenuTree(user.RoleId)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("获取失败qqq，%v", err), c)
+	} else {
+		response.OkWithData(MenusResponse{Menus: menus}, c)
+	}
 
 }

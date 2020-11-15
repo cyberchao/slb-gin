@@ -1,31 +1,32 @@
 package middleware
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"slb-admin/global/response"
+	"slb-admin/service"
 )
 
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fmt.Println("123")
+		// 我们这里jwt鉴权取头部信息 x-token 登录时回返回token信息 这里前端需要把token存储到cookie或者本地localStorage中 不过需要跟后端协商过期时间 可以约定刷新令牌或者重新登录
+		token := c.Request.Header.Get("x-token")
+		username := c.Request.Header.Get("x-username")
+		if token == "" || username == "" {
+			response.Result(response.ERROR, gin.H{
+				"reload": true,
+			}, "未登录或非法访问", c)
+
+			return
+		}
+		err, RedisJwtToken := service.GetRedisJWT(username)
+		if err != nil {
+			response.Result(response.ERROR, gin.H{
+				"reload": true,
+			}, "未登录或非法访问", c)
+			return
+		} else if RedisJwtToken == token {
+			_ = service.SetRedisJWT(token, username)
+			c.Next()
+		}
 	}
 }
-
-// 更新token
-//func (j *JWT) RefreshToken(tokenString string) (string, error) {
-//	jwt.TimeFunc = func() time.Time {
-//		return time.Unix(0, 0)
-//	}
-//	token, err := jwt.ParseWithClaims(tokenString, &request.CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
-//		return j.SigningKey, nil
-//	})
-//	if err != nil {
-//		return "", err
-//	}
-//	if claims, ok := token.Claims.(*request.CustomClaims); ok && token.Valid {
-//		jwt.TimeFunc = time.Now
-//		claims.StandardClaims.ExpiresAt = time.Now().Unix() + 60*60*24*7
-//		return j.CreateToken(*claims)
-//	}
-//	return "", TokenInvalid
-//}

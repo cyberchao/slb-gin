@@ -1,7 +1,7 @@
 package model
 
 type Menu struct {
-	ID        uint   `gorm:"primarykey"`
+	ID        string `gorm:"primarykey"`
 	MenuLevel uint   `json:"-"`
 	ParentId  string `json:"parentId" gorm:"comment:父菜单ID"`
 	Path      string `json:"path" gorm:"comment:路由path"`
@@ -12,6 +12,6 @@ type Menu struct {
 	KeepAlive bool   `json:"keepAlive" gorm:"comment:是否缓存"`
 	Title     string `json:"title" gorm:"comment:菜单名"`
 	Icon      string `json:"icon" gorm:"comment:菜单图标"`
-	Roles     []Role `json:"authoritys" gorm:"many2many:sys_authority_menus;"`
+	Roles     []Role `json:"roles" gorm:"many2many:role_menus;"`
 	Children  []Menu `json:"children" gorm:"-"`
 }
