@@ -6,11 +6,17 @@ import (
 	"slb-admin/middleware"
 )
 
+func InitLoginRouter(Router *gin.RouterGroup) {
+	UserRouter := Router.Group("user")
+	{
+		UserRouter.POST("login", v1.Login)
+	}
+}
 func InitUserRouter(Router *gin.RouterGroup) {
 	UserRouter := Router.Group("user").
 		Use(middleware.JWTAuth())
 	{
-		UserRouter.POST("login", v1.Login)
+		UserRouter.POST("logout", v1.Logout)
 	}
 }
 

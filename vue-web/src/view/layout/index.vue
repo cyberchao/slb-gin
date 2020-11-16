@@ -49,7 +49,7 @@
                 <Screenfull class="screenfull"></Screenfull>
                 <el-dropdown>
                   <span class="header-avatar">
-                    欢迎您，<CustomPic />
+                    欢迎您，
                     <span style="margin-left: 5px">{{
                       userInfo.nickName
                     }}</span>
@@ -148,8 +148,6 @@ import Screenfull from "@/view/layout/screenfull";
 import Search from "@/view/layout/search/search";
 import BottomInfo from "@/view/layout/bottomInfo/bottomInfo";
 import { mapGetters, mapActions } from "vuex";
-import { changePassword } from "@/api/user";
-import CustomPic from "@/components/customPic";
 export default {
   name: "Layout",
   data() {
@@ -195,7 +193,6 @@ export default {
     Screenfull,
     Search,
     BottomInfo,
-    CustomPic,
   },
   methods: {
     ...mapActions("user", ["LoginOut"]),
@@ -212,22 +209,6 @@ export default {
       this.isShadowBg = !this.isShadowBg;
       this.isSider = !!this.isCollapse;
       this.totalCollapse();
-    },
-    savePassword() {
-      this.$refs.modifyPwdForm.validate((valid) => {
-        if (valid) {
-          changePassword({
-            username: this.userInfo.userName,
-            password: this.pwdModify.password,
-            newPassword: this.pwdModify.newPassword,
-          }).then(() => {
-            this.$message.success("修改密码成功！");
-            this.showPassword = false;
-          });
-        } else {
-          return false;
-        }
-      });
     },
     clearPassword() {
       this.pwdModify = {

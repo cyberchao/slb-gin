@@ -35,7 +35,6 @@ export const user = {
     },
     actions: {
         async LoginIn({ commit }, loginInfo) {
-            console.log(234)
             const res = await login(loginInfo)
             console.log(res)
             if (res.code == 0) {

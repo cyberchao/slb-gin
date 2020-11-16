@@ -15,8 +15,9 @@ func Routers() *gin.Engine {
 	Router.Use(middleware.Cors())
 	Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	ApiGroup := Router.Group("")
-	router.InitRootRouter(ApiGroup) // 注册用户路由
-	router.InitUserRouter(ApiGroup) // 注册基础功能路由 不做鉴权
+	router.InitRootRouter(ApiGroup) //
+	router.InitLoginRouter(ApiGroup) // 注册登录路由 不做鉴权 其它路由全部鉴权
+	router.InitUserRouter(ApiGroup) //
 	router.InitMenuRouter(ApiGroup)
 	return Router
 }

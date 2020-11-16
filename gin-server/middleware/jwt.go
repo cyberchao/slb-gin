@@ -25,6 +25,7 @@ func JWTAuth() gin.HandlerFunc {
 			}, "未登录或非法访问", c)
 			return
 		} else if RedisJwtToken == token {
+			// 刷新超时时间
 			_ = service.SetRedisJWT(token, username)
 			c.Next()
 		}

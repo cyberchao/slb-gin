@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"slb-admin/global"
@@ -14,7 +15,10 @@ import (
 
 func Login(c *gin.Context) {
 	var L request.LoginStruct
-	_ = c.ShouldBindJSON(&L)
+	if err := c.ShouldBindJSON(&L);err != nil{
+		fmt.Println(err)
+	}
+
 	err, ssores := service.LoginSSO(L)
 	if err != nil {
 		response.FailWithMessage("sso连接失败", c)

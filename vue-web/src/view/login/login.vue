@@ -102,7 +102,6 @@ export default {
   methods: {
     ...mapActions("user", ["LoginIn"]),
     async login() {
-      console.log(this);
       await this.LoginIn(this.loginForm);
     },
     async submitForm() {
