@@ -17,7 +17,6 @@ func Routers() *gin.Engine {
 	ApiGroup := Router.Group("")
 	router.InitRootRouter(ApiGroup) //
 	router.InitLoginRouter(ApiGroup) // 注册登录路由 不做鉴权 其它路由全部鉴权
-	router.InitUserRouter(ApiGroup) //
 	router.InitMenuRouter(ApiGroup)
 	return Router
 }

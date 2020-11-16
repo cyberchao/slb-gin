@@ -12,13 +12,6 @@ func InitLoginRouter(Router *gin.RouterGroup) {
 		UserRouter.POST("login", v1.Login)
 	}
 }
-func InitUserRouter(Router *gin.RouterGroup) {
-	UserRouter := Router.Group("user").
-		Use(middleware.JWTAuth())
-	{
-		UserRouter.POST("logout", v1.Logout)
-	}
-}
 
 func InitMenuRouter(Router *gin.RouterGroup) (R gin.IRoutes) {
 	MenuRouter := Router.Group("menu").

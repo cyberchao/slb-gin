@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"slb-admin/core"
 	"slb-admin/global"
 	"slb-admin/initialize"
@@ -20,6 +21,6 @@ func main() {
 	//s.WriteTimeout = 10 * time.Second
 	//s.MaxHeaderBytes = 1 << 20
 	//s.ListenAndServe()
-	Router.Run(":8080")
-	//http.ListenAndServe(":8080", Router)
+	//Router.Run(":8082")
+	http.ListenAndServe(":8080", Router)
 }

@@ -59,7 +59,7 @@ export default {
   name: "Login",
   data() {
     const checkUsername = (rule, value, callback) => {
-      if (value.length < 5 || value.length > 12) {
+      if (value.length < 3 || value.length > 30) {
         return callback(new Error("请输入正确的用户名"));
       } else {
         callback();
