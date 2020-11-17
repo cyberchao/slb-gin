@@ -6,7 +6,6 @@ const service = axios.create({
     baseURL: process.env.VUE_APP_BASE_API,
     timeout: 99999
 })
-console.log(process.env.VUE_APP_BASE_API);
 let acitveAxios = 0
 let timer
 const showLoading = () => {
@@ -34,16 +33,17 @@ service.interceptors.request.use(
         if (!config.donNotShowLoading) {
             showLoading()
         }
+        console.log(store.getters['user/userInfo'])
         const token = store.getters['user/token']
         const user = store.getters['user/userInfo']
         config.data = JSON.stringify(config.data);
-        console.log(config.data)
         config.headers = {
             'Content-Type': 'application/json',
             'x-token': token,
             'x-user-id': user.id,
-            'x-user-name': user.username,
+            'x-user-name': user.userName,
         }
+        console.log(config.headers)
         return config;
     },
     error => {
@@ -73,7 +73,6 @@ service.interceptors.response.use(
                 message: response.data.msg || decodeURI(response.headers.msg),
                 type: 'error',
             })
-            console.log(response.data.msg);
             if (response.data.data && response.data.data.reload) {
                 store.commit('user/LoginOut')
             }

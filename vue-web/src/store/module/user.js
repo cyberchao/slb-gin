@@ -7,7 +7,8 @@ export const user = {
         userInfo: {
             id: "",
             username: "",
-            authority: "",
+            role: "",
+            roleid:"",
         },
         token: "",
     },
@@ -36,9 +37,7 @@ export const user = {
     actions: {
         async LoginIn({ commit }, loginInfo) {
             const res = await login(loginInfo)
-            console.log(res)
             if (res.code == 0) {
-                console.log(res)
                 commit('setUserInfo', res.data.user)
                 commit('setToken', res.data.token)
                 const redirect = router.history.current.query.redirect

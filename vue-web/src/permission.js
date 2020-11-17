@@ -7,7 +7,6 @@ const whiteList = ['login']
 
 router.beforeEach(async(to, from, next) => {
     const token = store.getters['user/token']
-    console.log(token)
         // 在白名单中的判断情况
     if (whiteList.indexOf(to.name) > -1) {
         if (token) {

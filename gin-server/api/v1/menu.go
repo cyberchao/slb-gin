@@ -14,7 +14,7 @@ func GetMenu(c *gin.Context) {
 		Menus []model.Menu `json:"menus"`
 	}
 
-	username := c.Request.Header.Get("x-username")
+	username := c.Request.Header.Get("x-user-name")
 	var user model.User
 	global.DB.Where("username = ?", username).First(&user)
 	err, menus := service.GetMenuTree(user.RoleId)

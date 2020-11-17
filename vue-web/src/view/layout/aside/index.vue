@@ -49,7 +49,6 @@ export default {
       if (index.indexOf("http://") > -1 || index.indexOf("https://") > -1) {
         window.open(index);
       } else {
-        console.log(this);
         this.$router.push({ name: index, query, params });
       }
     }
