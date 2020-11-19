@@ -33,7 +33,6 @@ service.interceptors.request.use(
         if (!config.donNotShowLoading) {
             showLoading()
         }
-        console.log(store.getters['user/userInfo'])
         const token = store.getters['user/token']
         const user = store.getters['user/userInfo']
         config.data = JSON.stringify(config.data);
@@ -43,7 +42,6 @@ service.interceptors.request.use(
             'x-user-id': user.id,
             'x-user-name': user.userName,
         }
-        console.log(config.headers)
         return config;
     },
     error => {

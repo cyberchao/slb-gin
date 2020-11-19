@@ -54,3 +54,37 @@ func tokenNext(token string, L request.LoginStruct) (err error, us model.User) {
 	}
 	return nil, u
 }
+
+
+func GetUserList(c *gin.Context) {
+	var pageInfo request.PageInfo
+	if err := c.ShouldBindJSON(&pageInfo);err != nil{
+		fmt.Println(err)
+	}
+	err, list, total := service.GetUserInfoList(pageInfo)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("获取数据失败，%v", err), c)
+	} else {
+		response.OkWithData(resp.PageResult{
+			List:     list,
+			Total:    total,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, c)
+	}
+}
+
+
+func SetUserRole(c *gin.Context) {
+	var sua request.SetUserAuth
+	if err := c.ShouldBindJSON(&sua);err != nil{
+		fmt.Println(err)
+	}
+
+	err := service.SetUserRole(sua.ID, sua.RoleId)
+	if err != nil {
+		response.FailWithMessage(fmt.Sprintf("修改失败，%v", err), c)
+	} else {
+		response.OkWithMessage("修改成功", c)
+	}
+}

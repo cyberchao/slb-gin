@@ -13,6 +13,15 @@ func InitLoginRouter(Router *gin.RouterGroup) {
 	}
 }
 
+func InitUserRouter(Router *gin.RouterGroup) {
+	UserRouter := Router.Group("user").
+		Use(middleware.JWTAuth())
+	{
+		UserRouter.POST("getUserList", v1.GetUserList) // 分页获取用户列表
+		UserRouter.POST("setUserRole", v1.SetUserRole) // 设置用户权限
+	}
+}
+
 func InitMenuRouter(Router *gin.RouterGroup) (R gin.IRoutes) {
 	MenuRouter := Router.Group("menu").
 		Use(middleware.JWTAuth())

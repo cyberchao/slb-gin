@@ -3,6 +3,7 @@ package service
 import (
 	"slb-admin/global"
 	"slb-admin/model"
+	"fmt"
 )
 
 func getMenuTreeMap(roleId string) (err error, treeMap map[string][]model.Menu) {
@@ -11,6 +12,7 @@ func getMenuTreeMap(roleId string) (err error, treeMap map[string][]model.Menu) 
 
 	var role []model.Role
 	global.DB.Where("role_id= ?", roleId).First(&role)
+	fmt.Println(role)
 	global.DB.Model(&role).Association("Menus").Find(&allMenus)
 	//err = global.DB.Where("role_id= ?", "3").Order("sort").Find(&allMenus).Error
 	for _, v := range allMenus {

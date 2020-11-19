@@ -9,8 +9,8 @@
       ></el-row>
       <el-aside class="main-cont main-left">
         <div class="tilte">
-          <img alt class="logoimg" src="~@/assets/nav_logo.png" />
-          <h2 class="tit-text" v-if="isSider">Gin-Vue-Admin</h2>
+          <!-- <img alt class="logoimg" src="~@/assets/nav_logo.png" /> -->
+          <h2 class="tit-text" v-if="isSider">SLB运维平台</h2>
         </div>
         <Aside class="aside" />
       </el-aside>
@@ -49,33 +49,17 @@
                 <Screenfull class="screenfull"></Screenfull>
                 <el-dropdown>
                   <span class="header-avatar">
-                    欢迎您，
+                    欢迎，
                     <span style="margin-left: 5px">{{
-                      userInfo.nickName
+                      userInfo.userName
                     }}</span>
                     <i class="el-icon-arrow-down"></i>
                   </span>
                   <el-dropdown-menu class="dropdown-group" slot="dropdown">
-                    <el-dropdown-item>
-                      <span>
-                        更多信息
-                        <el-badge is-dot />
-                      </span>
-                    </el-dropdown-item>
-                    <el-dropdown-item
-                      @click.native="showPassword = true"
-                      icon="el-icon-s-custom"
-                      >修改密码</el-dropdown-item
-                    >
-                    <el-dropdown-item
-                      @click.native="toPerson"
-                      icon="el-icon-s-custom"
-                      >个人信息</el-dropdown-item
-                    >
                     <el-dropdown-item
                       @click.native="LoginOut"
                       icon="el-icon-table-lamp"
-                      >登 出</el-dropdown-item
+                      >logout</el-dropdown-item
                     >
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -108,36 +92,6 @@
         <BottomInfo />
       </el-main>
     </el-container>
-    <el-dialog
-      :visible.sync="showPassword"
-      @close="clearPassword"
-      title="修改密码"
-      width="360px"
-    >
-      <el-form
-        :model="pwdModify"
-        :rules="rules"
-        label-width="80px"
-        ref="modifyPwdForm"
-      >
-        <el-form-item :minlength="6" label="原密码" prop="password">
-          <el-input show-password v-model="pwdModify.password"></el-input>
-        </el-form-item>
-        <el-form-item :minlength="6" label="新密码" prop="newPassword">
-          <el-input show-password v-model="pwdModify.newPassword"></el-input>
-        </el-form-item>
-        <el-form-item :minlength="6" label="确认密码" prop="confirmPassword">
-          <el-input
-            show-password
-            v-model="pwdModify.confirmPassword"
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <div class="dialog-footer" slot="footer">
-        <el-button @click="showPassword = false">取 消</el-button>
-        <el-button @click="savePassword" type="primary">确 定</el-button>
-      </div>
-    </el-dialog>
   </el-container>
 </template>
 
@@ -160,30 +114,6 @@ export default {
       showPassword: false,
       loadingFlag: false,
       pwdModify: {},
-      rules: {
-        password: [
-          { required: true, message: "请输入密码", trigger: "blur" },
-          { min: 6, message: "最少6个字符", trigger: "blur" },
-        ],
-        newPassword: [
-          { required: true, message: "请输入新密码", trigger: "blur" },
-          { min: 6, message: "最少6个字符", trigger: "blur" },
-        ],
-        confirmPassword: [
-          { required: true, message: "请输入确认密码", trigger: "blur" },
-          { min: 6, message: "最少6个字符", trigger: "blur" },
-          {
-            validator: (rule, value, callback) => {
-              if (value !== this.pwdModify.newPassword) {
-                callback(new Error("两次密码不一致"));
-              } else {
-                callback();
-              }
-            },
-            trigger: "blur",
-          },
-        ],
-      },
       value: "",
     };
   },
@@ -202,21 +132,10 @@ export default {
       this.isShadowBg = !this.isCollapse;
       this.$bus.emit("collapse", this.isCollapse);
     },
-    toPerson() {
-      this.$router.push({ name: "person" });
-    },
     changeShadow() {
       this.isShadowBg = !this.isShadowBg;
       this.isSider = !!this.isCollapse;
       this.totalCollapse();
-    },
-    clearPassword() {
-      this.pwdModify = {
-        password: "",
-        newPassword: "",
-        confirmPassword: "",
-      };
-      this.$refs.modifyPwdForm.clearValidate();
     },
   },
   computed: {

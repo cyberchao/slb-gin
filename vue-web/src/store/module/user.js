@@ -49,10 +49,7 @@ export const user = {
             }
         },
         async LoginOut({ commit }) {
-            const res = await logout()
-            if (res.code == 0) {
-                commit("LoginOut")
-            }
+            commit("LoginOut")
         }
     },
     getters: {
