@@ -37,3 +37,17 @@ func GetMenuTree(roleId string) (err error, menus []model.Menu) {
 	}
 	return err, menus
 }
+
+func AddMenuRole(menus []model.Menu, roleId string) (err error) {
+	var auth model.Role
+	auth.RoleId = roleId
+	auth.Menus = menus
+	err = SetMenuRole(&auth)
+	return err
+}
+
+func GetMenuRole(roleId string) (err error, menus []model.Menu) {
+	err = global.DB.Where("role_id = ? ", roleId).Order("sort").Find(&menus).Error
+	//err = global.DB.Raw(sql, roleId).Scan(&menus).Error
+	return err, menus
+}

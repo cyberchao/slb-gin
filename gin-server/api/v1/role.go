@@ -7,7 +7,6 @@ import (
 	"slb-admin/model/request"
 	resp "slb-admin/model/response"
 	"slb-admin/service"
-	"slb-admin/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,51 +21,18 @@ import (
 func CreateRole(c *gin.Context) {
 	var auth model.Role
 	_ = c.ShouldBindJSON(&auth)
+	type SysRoleResponse struct {
+		role model.Role `json:"role"`
+	}
 
 	err, authBack := service.CreateRole(auth)
 	if err != nil {
 		response.FailWithMessage(fmt.Sprintf("创建失败，%v", err), c)
 	} else {
-		response.OkWithData(resp.SysRoleResponse{Role: authBack}, c)
+		response.OkWithData(SysRoleResponse{role: authBack}, c)
 	}
 }
 
-// @Tags authority
-// @Summary 拷贝角色
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body response.SysRoleCopyResponse true "拷贝角色"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"拷贝成功"}"
-// @Router /authority/copyRole [post]
-func CopyRole(c *gin.Context) {
-	var copyInfo resp.SysRoleCopyResponse
-	_ = c.ShouldBindJSON(&copyInfo)
-	OldRoleVerify := utils.Rules{
-		"OldRoleId": {utils.NotEmpty()},
-	}
-	OldRoleVerifyErr := utils.Verify(copyInfo, OldRoleVerify)
-	if OldRoleVerifyErr != nil {
-		response.FailWithMessage(OldRoleVerifyErr.Error(), c)
-		return
-	}
-	RoleVerify := utils.Rules{
-		"RoleId":   {utils.NotEmpty()},
-		"RoleName": {utils.NotEmpty()},
-		"ParentId":      {utils.NotEmpty()},
-	}
-	RoleVerifyErr := utils.Verify(copyInfo.Role, RoleVerify)
-	if RoleVerifyErr != nil {
-		response.FailWithMessage(RoleVerifyErr.Error(), c)
-		return
-	}
-	err, authBack := service.CopyRole(copyInfo)
-	if err != nil {
-		response.FailWithMessage(fmt.Sprintf("拷贝失败，%v", err), c)
-	} else {
-		response.OkWithData(resp.SysRoleResponse{Role: authBack}, c)
-	}
-}
 
 // @Tags authority
 // @Summary 删除角色
@@ -77,13 +43,8 @@ func CopyRole(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /authority/deleteRole [post]
 func DeleteRole(c *gin.Context) {
-	var a model.SysRole
+	var a model.Role
 	_ = c.ShouldBindJSON(&a)
-	RoleIdVerifyErr := utils.Verify(a, utils.CustomizeMap["RoleIdVerify"])
-	if RoleIdVerifyErr != nil {
-		response.FailWithMessage(RoleIdVerifyErr.Error(), c)
-		return
-	}
 	// 删除角色之前需要判断是否有用户正在使用此角色
 	err := service.DeleteRole(&a)
 	if err != nil {
@@ -102,23 +63,17 @@ func DeleteRole(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"设置成功"}"
 // @Router /authority/updateRole [post]
 func UpdateRole(c *gin.Context) {
-	var auth model.SysRole
+	var auth model.Role
 	_ = c.ShouldBindJSON(&auth)
-	RoleVerify := utils.Rules{
-		"RoleId":   {utils.NotEmpty()},
-		"RoleName": {utils.NotEmpty()},
-		"ParentId":      {utils.NotEmpty()},
+	type SysRoleResponse struct {
+		role model.Role `json:"role"`
 	}
-	RoleVerifyErr := utils.Verify(auth, RoleVerify)
-	if RoleVerifyErr != nil {
-		response.FailWithMessage(RoleVerifyErr.Error(), c)
-		return
-	}
-	err, authority := service.UpdateRole(auth)
+
+	err, role := service.UpdateRole(auth)
 	if err != nil {
 		response.FailWithMessage(fmt.Sprintf("更新失败，%v", err), c)
 	} else {
-		response.OkWithData(resp.SysRoleResponse{Role: authority}, c)
+		response.OkWithData(SysRoleResponse{role: role}, c)
 	}
 }
 
@@ -133,11 +88,7 @@ func UpdateRole(c *gin.Context) {
 func GetRoleList(c *gin.Context) {
 	var pageInfo request.PageInfo
 	_ = c.ShouldBindJSON(&pageInfo)
-	PageVerifyErr := utils.Verify(pageInfo, utils.CustomizeMap["PageVerify"])
-	if PageVerifyErr != nil {
-		response.FailWithMessage(PageVerifyErr.Error(), c)
-		return
-	}
+
 	err, list, total := service.GetRoleInfoList(pageInfo)
 	if err != nil {
 		response.FailWithMessage(fmt.Sprintf("获取数据失败，%v", err), c)
@@ -159,18 +110,14 @@ func GetRoleList(c *gin.Context) {
 // @Param data body model.SysRole true "设置角色资源权限"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"设置成功"}"
 // @Router /authority/setDataRole [post]
-func SetDataRole(c *gin.Context) {
-	var auth model.SysRole
-	_ = c.ShouldBindJSON(&auth)
-	RoleIdVerifyErr := utils.Verify(auth, utils.CustomizeMap["RoleIdVerify"])
-	if RoleIdVerifyErr != nil {
-		response.FailWithMessage(RoleIdVerifyErr.Error(), c)
-		return
-	}
-	err := service.SetDataRole(auth)
-	if err != nil {
-		response.FailWithMessage(fmt.Sprintf("设置关联失败，%v", err), c)
-	} else {
-		response.Ok(c)
-	}
-}
+//func SetDataRole(c *gin.Context) {
+//	var auth model.Role
+//	_ = c.ShouldBindJSON(&auth)
+//
+//	err := service.SetDataRole(auth)
+//	if err != nil {
+//		response.FailWithMessage(fmt.Sprintf("设置关联失败，%v", err), c)
+//	} else {
+//		response.Ok(c)
+//	}
+//}

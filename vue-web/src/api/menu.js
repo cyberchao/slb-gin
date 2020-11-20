@@ -52,11 +52,11 @@ export const getBaseMenuTree = () => {
 
 // @Summary 添加用户menu关联关系
 // @Produce  application/json
-// @Param menus Object authorityId string
+// @Param menus Object roleId string
 // @Router /menu/getMenuList [post]
-export const addMenuAuthority = (data) => {
+export const addMenuRole = (data) => {
     return service({
-        url: "/menu/addMenuAuthority",
+        url: "/menu/addMenuRole",
         method: 'post',
         data
     })
@@ -64,11 +64,11 @@ export const addMenuAuthority = (data) => {
 
 // @Summary 获取用户menu关联关系
 // @Produce  application/json
-// @Param authorityId string
-// @Router /menu/getMenuAuthority [post]
-export const getMenuAuthority = (data) => {
+// @Param roleId string
+// @Router /menu/getMenuRole [post]
+export const getMenuRole = (data) => {
     return service({
-        url: "/menu/getMenuAuthority",
+        url: "/menu/getMenuRole",
         method: 'post',
         data
     })

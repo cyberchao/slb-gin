@@ -36,9 +36,9 @@
 const path = process.env.VUE_APP_BASE_API;
 import {
   getUserList,
-  setUserrole,
+  setUserRole,
 } from "@/api/user";
-import { getroleList } from "@/api/role";
+import { getRoleList } from "@/api/role";
 import infoList from "@/mixins/infoList";
 import { mapGetters } from "vuex";
 export default {
@@ -86,8 +86,8 @@ export default {
           }
         });
     },
-    async changerole(row) {
-      const res = await setUserrole({
+    async changeRole(row) {
+      const res = await setUserRole({
         uuid: row.uuid,
         roleId: row.role.roleId
       });
@@ -98,7 +98,7 @@ export default {
   },
   async created() {
     this.getTableData();
-    const res = await getroleList({ page: 1, pageSize: 999 });
+    const res = await getRoleList({ page: 1, pageSize: 999 });
     this.setOptions(res.data.list);
   }
 };

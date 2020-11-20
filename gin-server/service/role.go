@@ -2,12 +2,10 @@ package service
 
 import (
 	"errors"
+	"gorm.io/gorm"
 	"slb-admin/global"
 	"slb-admin/model"
 	"slb-admin/model/request"
-	"slb-admin/model/response"
-	"gorm.io/gorm"
-	"strconv"
 )
 
 // @title    CreateRole
@@ -76,12 +74,8 @@ func GetRoleInfoList(info request.PageInfo) (err error, list interface{}, total 
 	offset := info.PageSize * (info.Page - 1)
 	db := global.DB
 	var role []model.Role
-	err = db.Limit(limit).Offset(offset).Preload("DataRoleId").Where("parent_id = 0").Find(&role).Error
-	if len(role) > 0 {
-		for k := range role {
-			err = findChildrenRole(&role[k])
-		}
-	}
+	err = db.Limit(limit).Offset(offset).Find(&role).Error
+
 	return err, role, total
 }
 
@@ -97,18 +91,6 @@ func GetRoleInfo(auth model.Role) (err error, sa model.Role) {
 	return err, sa
 }
 
-// @title    SetDataRole
-// @description   设置角色资源权限
-// @auth                     （2020/04/05  20:22）
-// @param     auth            model.Role
-// @return                    error
-
-func SetDataRole(auth model.Role) error {
-	var s model.Role
-	global.DB.Preload("DataRoleId").First(&s, "role_id = ?", auth.RoleId)
-	err := global.DB.Model(&s).Association("DataRoleId").Replace(&auth.DataRoleId)
-	return err
-}
 
 // @title    SetMenuRole
 // @description   菜单与角色绑定
