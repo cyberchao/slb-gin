@@ -10,12 +10,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @Tags authority
+// @Tags role
 // @Summary 创建角色
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.SysRole true "创建角色"
+// @Param data body model.Role true "创建角色"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /authority/createRole [post]
 func CreateRole(c *gin.Context) {
@@ -34,12 +34,12 @@ func CreateRole(c *gin.Context) {
 }
 
 
-// @Tags authority
+// @Tags role
 // @Summary 删除角色
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.SysRole true "删除角色"
+// @Param data body model.Role true "删除角色"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
 // @Router /authority/deleteRole [post]
 func DeleteRole(c *gin.Context) {
@@ -59,7 +59,7 @@ func DeleteRole(c *gin.Context) {
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.SysRole true "设置角色资源权限"
+// @Param data body model.Role true "设置角色资源权限"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"设置成功"}"
 // @Router /authority/updateRole [post]
 func UpdateRole(c *gin.Context) {
@@ -77,14 +77,14 @@ func UpdateRole(c *gin.Context) {
 	}
 }
 
-// @Tags authority
+// @Tags role
 // @Summary 分页获取角色列表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
 // @Param data body request.PageInfo true "分页获取用户列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /authority/getRoleList [post]
+// @Router /role/getRoleList [post]
 func GetRoleList(c *gin.Context) {
 	var pageInfo request.PageInfo
 	_ = c.ShouldBindJSON(&pageInfo)
@@ -102,22 +102,3 @@ func GetRoleList(c *gin.Context) {
 	}
 }
 
-// @Tags authority
-// @Summary 设置角色资源权
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body model.SysRole true "设置角色资源权限"
-// @Success 200 {string} string "{"success":true,"data":{},"msg":"设置成功"}"
-// @Router /authority/setDataRole [post]
-//func SetDataRole(c *gin.Context) {
-//	var auth model.Role
-//	_ = c.ShouldBindJSON(&auth)
-//
-//	err := service.SetDataRole(auth)
-//	if err != nil {
-//		response.FailWithMessage(fmt.Sprintf("设置关联失败，%v", err), c)
-//	} else {
-//		response.Ok(c)
-//	}
-//}

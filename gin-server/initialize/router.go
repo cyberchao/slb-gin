@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
+	_ "slb-admin/docs"
 	"slb-admin/middleware"
 	"slb-admin/router"
 )
@@ -20,6 +21,5 @@ func Routers() *gin.Engine {
 	router.InitUserRouter(ApiGroup)
 	router.InitRoleRouter(ApiGroup)
 	router.InitMenuRouter(ApiGroup)
-
 	return Router
 }

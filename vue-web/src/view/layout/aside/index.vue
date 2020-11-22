@@ -1,7 +1,11 @@
 <template>
   <div>
-    <el-scrollbar style="height:calc(100vh - 64px)">
-      <transition :duration="{ enter: 800, leave: 100 }" mode="out-in" name="el-fade-in-linear">
+    <el-scrollbar style="height: calc(100vh - 64px)">
+      <transition
+        :duration="{ enter: 800, leave: 100 }"
+        mode="out-in"
+        name="el-fade-in-linear"
+      >
         <el-menu
           :collapse="isCollapse"
           :collapse-transition="true"
@@ -11,9 +15,14 @@
           class="el-menu-vertical"
           text-color="rgb(191, 203, 217)"
           unique-opened
+          background-color="#191a23"
         >
           <template v-for="item in asyncRouters[0].children">
-            <aside-component :key="item.name" :routerInfo="item" v-if="!item.hidden" />
+            <aside-component
+              :key="item.name"
+              :routerInfo="item"
+              v-if="!item.hidden"
+            />
           </template>
         </el-menu>
       </transition>
@@ -29,7 +38,7 @@ export default {
   data() {
     return {
       active: "",
-      isCollapse: false
+      isCollapse: false,
     };
   },
   methods: {
@@ -38,7 +47,7 @@ export default {
       const query = {};
       const params = {};
       ele.route.parameters &&
-        ele.route.parameters.map(item => {
+        ele.route.parameters.map((item) => {
           if (item.type == "query") {
             query[item.key] = item.value;
           } else {
@@ -51,13 +60,13 @@ export default {
       } else {
         this.$router.push({ name: index, query, params });
       }
-    }
+    },
   },
   computed: {
-    ...mapGetters("router", ["asyncRouters"])
+    ...mapGetters("router", ["asyncRouters"]),
   },
   components: {
-    AsideComponent
+    AsideComponent,
   },
   created() {
     this.active = this.$route.name;
@@ -66,18 +75,18 @@ export default {
       this.isCollapse = !this.isCollapse;
     }
 
-    this.$bus.on("collapse", item => {
+    this.$bus.on("collapse", (item) => {
       this.isCollapse = item;
     });
   },
   watch: {
     $route() {
       this.active = this.$route.name;
-    }
+    },
   },
   beforeDestroy() {
     this.$bus.off("collapse");
-  }
+  },
 };
 </script>
 

@@ -6,15 +6,15 @@
 
 <script>
 export default {
-  name: 'app',
-  components: {}
-}
+  name: "app",
+  components: {},
+};
 </script>
 
 <style lang="scss">
 // 引入初始化样式
-@import '@/style/main.scss';
-@import '@/style/base.scss';
+@import "@/style/main.scss";
+@import "@/style/base.scss";
 #app {
   background: #eee;
   height: 100vh;

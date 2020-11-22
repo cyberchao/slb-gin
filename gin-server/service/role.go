@@ -48,9 +48,6 @@ func DeleteRole(auth *model.Role) (err error) {
 	if !errors.Is(global.DB.Where("role_id = ?", auth.RoleId).First(&model.User{}).Error, gorm.ErrRecordNotFound) {
 		return errors.New("此角色有用户正在使用禁止删除")
 	}
-	if !errors.Is(global.DB.Where("parent_id = ?", auth.RoleId).First(&model.Role{}).Error, gorm.ErrRecordNotFound) {
-		return errors.New("此角色存在子角色不允许删除")
-	}
 	db := global.DB.Preload("Menus").Where("role_id = ?", auth.RoleId).First(auth)
 	err = db.Unscoped().Delete(auth).Error
 	if len(auth.Menus) > 0 {

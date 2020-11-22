@@ -1,5 +1,4 @@
 import { login } from '@/api/user'
-import { logout } from '@/api/logout'
 import router from '@/router/index'
 export const user = {
     namespaced: true,

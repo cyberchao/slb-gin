@@ -25,7 +25,7 @@ export const getRoleList = (data) => {
 // @Router /role/deleterole [post]
 export const deleteRole = (data) => {
     return service({
-        url: "/role/deleterole",
+        url: "/role/deleteRole",
         method: 'post',
         data
     })
@@ -40,27 +40,12 @@ export const deleteRole = (data) => {
 // @Router /role/createrole [post]
 export const createRole = (data) => {
     return service({
-        url: "/role/createrole",
+        url: "/role/createRole",
         method: 'post',
         data
     })
 }
 
-// @Tags role
-// @Summary 拷贝角色
-// @Security ApiKeyAuth
-// @accept application/json
-// @Produce application/json
-// @Param data body api.CreaterolePatams true "拷贝角色"
-// @Success 200 {string} json "{"success":true,"data":{},"msg":"拷贝成功"}"
-// @Router /role/copyrole [post]
-export const copyRole = (data) => {
-    return service({
-        url: "/role/copyrole",
-        method: 'post',
-        data
-    })
-}
 
 // @Summary 设置角色资源权限
 // @Security ApiKeyAuth
@@ -71,7 +56,7 @@ export const copyRole = (data) => {
 // @Router /role/setDatarole [post]
 export const setDataRole = (data) => {
     return service({
-        url: "/role/setDatarole",
+        url: "/role/setDataRole",
         method: 'post',
         data
     })
@@ -86,7 +71,7 @@ export const setDataRole = (data) => {
 // @Router /role/setDatarole [post]
 export const updateRole = (data) => {
     return service({
-        url: "/role/updaterole",
+        url: "/role/updateRole",
         method: 'put',
         data
     })

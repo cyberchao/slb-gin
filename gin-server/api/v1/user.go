@@ -13,6 +13,7 @@ import (
 	"slb-admin/service"
 )
 
+
 func Login(c *gin.Context) {
 	var L request.LoginStruct
 	if err := c.ShouldBindJSON(&L);err != nil{

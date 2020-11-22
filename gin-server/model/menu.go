@@ -12,6 +12,10 @@ type Menu struct {
 	KeepAlive bool   `json:"keepAlive" gorm:"comment:是否缓存"`
 	Title     string `json:"title" gorm:"comment:菜单名"`
 	Icon      string `json:"icon" gorm:"comment:菜单图标"`
+	Meta          `json:"meta" gorm:"comment:附加属性"`
 	Roles     []Role `json:"roles" gorm:"many2many:role_menus;"`
 	Children  []Menu `json:"children" gorm:"-"`
+}
+type Meta struct {
+	Titletab       string `json:"title" gorm:"comment:菜单名"`
 }

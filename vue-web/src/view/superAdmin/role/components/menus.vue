@@ -1,7 +1,9 @@
 <template>
   <div>
     <div class="clearflex">
-      <el-button @click="relation" class="fl-right" size="small" type="primary">确 定</el-button>
+      <el-button @click="relation" class="fl-right" size="small" type="primary"
+        >确 定</el-button
+      >
     </div>
     <el-tree
       :data="menuTreeData"
@@ -17,71 +19,72 @@
   </div>
 </template>
 <script>
-import { getBaseMenuTree, getMenuRole, addMenuRole } from '@/api/menu'
+import { getBaseMenuTree, getMenuRole, addMenuRole } from "@/api/menu";
 
 export default {
-  name: 'Menus',
+  name: "Menus",
   props: {
     row: {
-      default: function() {
-        return {}
+      default: function () {
+        return {};
       },
-      type: Object
-    }
+      type: Object,
+    },
   },
   data() {
     return {
       menuTreeData: [],
       menuTreeIds: [],
-      needConfirm:false,
+      needConfirm: false,
       menuDefaultProps: {
-        children: 'children',
-        label: function(data){
-          return data.meta.title
-        }
-      }
-    }
+        children: "children",
+        label: function (data) {
+          return data.title;
+        },
+      },
+    };
   },
+  
   methods: {
-    nodeChange(){
-      this.needConfirm = true
+    nodeChange() {
+      this.needConfirm = true;
     },
     // 暴露给外层使用的切换拦截统一方法
-    enterAndNext(){
-      this.relation()
+    enterAndNext() {
+      this.relation();
     },
     // 关联树 确认方法
     async relation() {
-      const checkArr = this.$refs.menuTree.getCheckedNodes(false, true)
+      const checkArr = this.$refs.menuTree.getCheckedNodes(false, true);
       const res = await addMenuRole({
         menus: checkArr,
-        roleId: this.row.roleId
-      })
+        roleId: this.row.roleId,
+      });
       if (res.code == 0) {
         this.$message({
-          type: 'success',
-          message: '菜单设置成功!'
-        })
+          type: "success",
+          message: "菜单设置成功!",
+        });
       }
-    }
+    },
   },
   async created() {
     // 获取所有菜单树
-    const res = await getBaseMenuTree()
-    this.menuTreeData = res.data.menus
+    const res = await getBaseMenuTree();
+    this.menuTreeData = res.data.menus;
 
-    const res1 = await getMenuRole({ roleId: this.row.roleId })
-    const menus = res1.data.menus
-    const arr = []
-    menus.map(item => {
+    const res1 = await getMenuRole({ roleId: this.row.roleId });
+    const menus = res1.data.menus;
+    const arr = [];
+    menus.map((item) => {
       // 防止直接选中父级造成全选
-      if (!menus.some(same => same.parentId === item.menuId)) {
-        arr.push(Number(item.menuId))
+      if (!menus.some((same) => same.parentId === item.ID)) {
+        arr.push(Number(item.ID));
       }
-    })
-    this.menuTreeIds = arr
-  }
-}
+    });
+    this.menuTreeIds = arr;
+  },
+};
 </script>
 <style lang="scss">
 </style>

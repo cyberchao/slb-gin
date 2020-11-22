@@ -6,7 +6,13 @@ import (
 	"slb-admin/global"
 	"slb-admin/initialize"
 )
-
+// @title Swagger Example API
+// @version 0.0.1
+// @description This is a sample Server pets
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name x-token
+// @BasePath /
 func main() {
 	global.VP = core.Viper("./config.yaml")
 	global.DB = initialize.GormMysql()

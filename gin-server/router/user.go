@@ -27,6 +27,9 @@ func InitMenuRouter(Router *gin.RouterGroup) (R gin.IRoutes) {
 		Use(middleware.JWTAuth())
 	{
 		MenuRouter.POST("getMenu", v1.GetMenu) // 获取菜单树
+		MenuRouter.POST("getBaseMenuTree", v1.GetBaseMenuTree)   // 获取用户动态路由
+		MenuRouter.POST("addMenuRole", v1.AddMenuRole) //	增加menu和角色关联关系
+		MenuRouter.POST("getMenuRole", v1.GetMenuRole) // 获取指定角色menu
 	}
 	return MenuRouter
 }

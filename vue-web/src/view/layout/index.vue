@@ -8,9 +8,9 @@
         @click.native="changeShadow()"
       ></el-row>
       <el-aside class="main-cont main-left">
-        <div class="tilte">
+        <div class="tilte" style="background: #191a23">
           <!-- <img alt class="logoimg" src="~@/assets/nav_logo.png" /> -->
-          <h2 class="tit-text" v-if="isSider">SLB运维平台</h2>
+          <h2 class="tit-text" v-if="isSider">SLB-Admin</h2>
         </div>
         <Aside class="aside" />
       </el-aside>
