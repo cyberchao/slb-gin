@@ -9,4 +9,5 @@ type Server struct {
 	System  System  `mapstructure:"system" json:"system" yaml:"system"`
 	Captcha Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
 	Mysql   Mysql   `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
+	Mongo   Mongo   `mapstructure:"mongo" json:"mongo" yaml:"mongo"`
 }

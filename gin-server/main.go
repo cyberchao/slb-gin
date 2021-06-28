@@ -6,6 +6,7 @@ import (
 	"slb-admin/global"
 	"slb-admin/initialize"
 )
+
 // @title Swagger Example API
 // @version 0.0.1
 // @description This is a sample Server pets
@@ -16,10 +17,13 @@ import (
 func main() {
 	global.VP = core.Viper("./config.yaml")
 	global.DB = initialize.GormMysql()
+	global.Mogo = initialize.Mongo()
 	initialize.MysqlTables(global.DB)
 	initialize.Redis()
 	db, _ := global.DB.DB()
 	defer db.Close()
+
+	//test.Cross()
 
 	Router := initialize.Routers()
 	//s := endless.NewServer(":8080", Router)

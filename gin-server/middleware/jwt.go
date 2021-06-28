@@ -14,14 +14,16 @@ func JWTAuth() gin.HandlerFunc {
 		if token == "" || username == "" {
 			response.Result(response.ERROR, gin.H{
 				"reload": true,
-			}, "未登录或非法访问", c)
+			}, "未登录", c)
+			c.Abort() //终止请求
 			return
 		}
 		err, RedisJwtToken := service.GetRedisJWT(username)
 		if err != nil {
 			response.Result(response.ERROR, gin.H{
 				"reload": true,
-			}, "未登录或非法访问", c)
+			}, "token过期", c)
+			c.Abort()
 			return
 		} else if RedisJwtToken == token {
 			// 刷新超时时间

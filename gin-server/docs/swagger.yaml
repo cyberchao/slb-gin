@@ -1,3 +1,4 @@
+basePath: /
 definitions:
   model.Menu:
     properties:
@@ -50,8 +51,11 @@ definitions:
     type: object
 info:
   contact: {}
+  description: This is a sample Server pets
+  title: Swagger Example API
+  version: 0.0.1
 paths:
-  /authority/createRole:
+  /role/createRole:
     post:
       consumes:
       - application/json
@@ -74,7 +78,7 @@ paths:
       summary: 创建角色
       tags:
       - role
-  /authority/deleteRole:
+  /role/deleteRole:
     post:
       consumes:
       - application/json
@@ -97,29 +101,6 @@ paths:
       summary: 删除角色
       tags:
       - role
-  /authority/updateRole:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: 设置角色资源权限
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/model.Role'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"success":true,"data":{},"msg":"设置成功"}'
-          schema:
-            type: string
-      security:
-      - ApiKeyAuth: []
-      summary: 设置角色资源权限
-      tags:
-      - authority
   /role/getRoleList:
     post:
       consumes:
@@ -143,4 +124,32 @@ paths:
       summary: 分页获取角色列表
       tags:
       - role
+  /role/updateRole:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 设置角色资源权限
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.Role'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"success":true,"data":{},"msg":"设置成功"}'
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
+      summary: 设置角色资源权限
+      tags:
+      - authority
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: x-token
+    type: apiKey
 swagger: "2.0"

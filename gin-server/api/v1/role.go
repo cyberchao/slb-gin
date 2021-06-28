@@ -2,12 +2,12 @@ package v1
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"slb-admin/global/response"
 	"slb-admin/model"
 	"slb-admin/model/request"
 	resp "slb-admin/model/response"
 	"slb-admin/service"
-	"github.com/gin-gonic/gin"
 )
 
 // @Tags role
@@ -17,7 +17,7 @@ import (
 // @Produce application/json
 // @Param data body model.Role true "创建角色"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /authority/createRole [post]
+// @Router /role/createRole [post]
 func CreateRole(c *gin.Context) {
 	var auth model.Role
 	_ = c.ShouldBindJSON(&auth)
@@ -33,7 +33,6 @@ func CreateRole(c *gin.Context) {
 	}
 }
 
-
 // @Tags role
 // @Summary 删除角色
 // @Security ApiKeyAuth
@@ -41,7 +40,7 @@ func CreateRole(c *gin.Context) {
 // @Produce application/json
 // @Param data body model.Role true "删除角色"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /authority/deleteRole [post]
+// @Router /role/deleteRole [post]
 func DeleteRole(c *gin.Context) {
 	var a model.Role
 	_ = c.ShouldBindJSON(&a)
@@ -54,14 +53,14 @@ func DeleteRole(c *gin.Context) {
 	}
 }
 
-// @Tags authority
+// @Tags role
 // @Summary 设置角色资源权限
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
 // @Param data body model.Role true "设置角色资源权限"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"设置成功"}"
-// @Router /authority/updateRole [post]
+// @Router /role/updateRole [post]
 func UpdateRole(c *gin.Context) {
 	var auth model.Role
 	_ = c.ShouldBindJSON(&auth)
@@ -101,4 +100,3 @@ func GetRoleList(c *gin.Context) {
 		}, c)
 	}
 }
-

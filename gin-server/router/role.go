@@ -15,5 +15,6 @@ func InitRoleRouter(Router *gin.RouterGroup) {
 		RoleRouter.PUT("updateRole", v1.UpdateRole)    // 更新角色
 		RoleRouter.POST("getRoleList", v1.GetRoleList) // 获取角色列表
 		//RoleRouter.POST("setDataRole", v1.SetDataRole) // 设置角色资源权限
+		RoleRouter.POST("getList")
 	}
 }

@@ -24,7 +24,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/authority/createRole": {
+        "/role/createRole": {
             "post": {
                 "security": [
                     {
@@ -62,7 +62,7 @@ var doc = `{
                 }
             }
         },
-        "/authority/deleteRole": {
+        "/role/deleteRole": {
             "post": {
                 "security": [
                     {
@@ -93,44 +93,6 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/authority/updateRole": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "authority"
-                ],
-                "summary": "设置角色资源权限",
-                "parameters": [
-                    {
-                        "description": "设置角色资源权限",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Role"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"success\":true,\"data\":{},\"msg\":\"设置成功\"}",
                         "schema": {
                             "type": "string"
                         }
@@ -169,6 +131,44 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/updateRole": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authority"
+                ],
+                "summary": "设置角色资源权限",
+                "parameters": [
+                    {
+                        "description": "设置角色资源权限",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Role"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"设置成功\"}",
                         "schema": {
                             "type": "string"
                         }
@@ -253,6 +253,13 @@ var doc = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "x-token",
+            "in": "header"
+        }
     }
 }`
 
@@ -267,12 +274,12 @@ type swaggerInfo struct {
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
-	Version:     "",
+	Version:     "0.0.1",
 	Host:        "",
-	BasePath:    "",
+	BasePath:    "/",
 	Schemes:     []string{},
-	Title:       "",
-	Description: "",
+	Title:       "Swagger Example API",
+	Description: "This is a sample Server pets",
 }
 
 type s struct{}

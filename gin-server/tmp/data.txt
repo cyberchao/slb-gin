@@ -1,0 +1,14 @@
+http {
+server {
+        listen      443 ;
+        server_name  append3.com;
+
+
+        location /  {
+            123  ;
+        }
+
+        access_log /wls/applogs/nginx/append3.com.access.log main;
+        error_log /wls/applogs/nginx/append3.com.error.log warn;
+}
+}

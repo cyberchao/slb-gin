@@ -15,6 +15,7 @@ func MysqlTables(db *gorm.DB) {
 		model.User{},
 		model.Role{},
 		model.Menu{},
+		model.Host{},
 	)
 	if err != nil {
 		os.Exit(0)

@@ -21,6 +21,7 @@ func GetMenu(c *gin.Context) {
 	if err != nil {
 		response.FailWithMessage(fmt.Sprintf("获取失败qqq，%v", err), c)
 	} else {
+		fmt.Print(menus)
 		response.OkWithData(MenusResponse{Menus: menus}, c)
 	}
 

@@ -1,10 +1,14 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "This is a sample Server pets",
+        "title": "Swagger Example API",
+        "contact": {},
+        "version": "0.0.1"
     },
+    "basePath": "/",
     "paths": {
-        "/authority/createRole": {
+        "/role/createRole": {
             "post": {
                 "security": [
                     {
@@ -42,7 +46,7 @@
                 }
             }
         },
-        "/authority/deleteRole": {
+        "/role/deleteRole": {
             "post": {
                 "security": [
                     {
@@ -73,44 +77,6 @@
                 "responses": {
                     "200": {
                         "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/authority/updateRole": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "authority"
-                ],
-                "summary": "设置角色资源权限",
-                "parameters": [
-                    {
-                        "description": "设置角色资源权限",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/model.Role"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"success\":true,\"data\":{},\"msg\":\"设置成功\"}",
                         "schema": {
                             "type": "string"
                         }
@@ -149,6 +115,44 @@
                 "responses": {
                     "200": {
                         "description": "{\"success\":true,\"data\":{},\"msg\":\"获取成功\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/role/updateRole": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authority"
+                ],
+                "summary": "设置角色资源权限",
+                "parameters": [
+                    {
+                        "description": "设置角色资源权限",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Role"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"success\":true,\"data\":{},\"msg\":\"设置成功\"}",
                         "schema": {
                             "type": "string"
                         }
@@ -232,6 +236,13 @@
                     "type": "integer"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "x-token",
+            "in": "header"
         }
     }
 }

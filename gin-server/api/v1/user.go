@@ -27,7 +27,7 @@ func Login(c *gin.Context) {
 	returnCode := ssores["returnCode"].(string)
 	token := ssores["token"].(string)
 	if returnCode == "1" {
-		response.FailWithMessage("sso连接成功，获取token失败", c)
+		response.FailWithMessage("sso连接成功，用户密码验证失败", c)
 	} else {
 		if err, u := tokenNext(token, L); err != nil {
 			response.FailWithMessage("保存token失败", c)
