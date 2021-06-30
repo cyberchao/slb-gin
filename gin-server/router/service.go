@@ -17,6 +17,7 @@ func InitServiceRouter(Router *gin.RouterGroup) {
 		UserRouter.POST("updateServer", v1.UpdateServer)
 		UserRouter.POST("getServerList", v1.GetServerList)
 		UserRouter.POST("deleteServer", v1.DeleteServer)
+		UserRouter.POST("publishServer", v1.PublishServer)
 		UserRouter.POST("createHost", v1.CreateHost)
 		UserRouter.POST("checkHost", v1.CheckHost)
 		UserRouter.POST("reloadHost", v1.ReloadHost)

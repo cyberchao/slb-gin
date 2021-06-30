@@ -17,6 +17,7 @@ type VhostDoc struct {
 	Ngx         interface{} `json:"ngx"`
 	Src         string      `json:"src"`
 	Description string      `json:"description"'`
+	Status      bool        `json:"status"'`
 	Version     int         `json:"version"`
 	Time        time.Time   `json:"time"`
 	FilePath    string      `json:"filepath"`

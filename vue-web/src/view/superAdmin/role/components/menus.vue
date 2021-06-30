@@ -25,7 +25,7 @@ export default {
   name: "Menus",
   props: {
     row: {
-      default: function () {
+      default: function() {
         return {};
       },
       type: Object,
@@ -38,13 +38,13 @@ export default {
       needConfirm: false,
       menuDefaultProps: {
         children: "children",
-        label: function (data) {
+        label: function(data) {
           return data.title;
         },
       },
     };
   },
-  
+
   methods: {
     nodeChange() {
       this.needConfirm = true;
@@ -86,5 +86,4 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-</style>
+<style lang="scss"></style>

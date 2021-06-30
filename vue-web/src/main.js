@@ -9,7 +9,8 @@ import '@/permission'
 import { store } from '@/store/index'
 // 引入封装的router
 import router from '@/router/index'
-
+import global from '@/global/global' 
+Vue.prototype.GLOBAL = global
 Vue.config.productionTip = false
 
 // 路由守卫

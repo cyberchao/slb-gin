@@ -3,17 +3,18 @@ package v1
 import (
 	"context"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 	"os"
 	"slb-admin/global"
 	"slb-admin/global/response"
 	"slb-admin/model"
 	resp "slb-admin/model/response"
 	"time"
+
+	"github.com/apenella/go-ansible/pkg/adhoc"
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func CreateUpstream(c *gin.Context) {
@@ -28,6 +29,7 @@ func CreateUpstream(c *gin.Context) {
 
 	var postData requestData
 	if err := c.ShouldBindJSON(&postData); err != nil {
+		global.Logger.Errorf("c.ShouldBindJSON failed. err: [%s]", err.Error())
 		response.FailWithMessage("请求数据异常", c)
 	}
 
@@ -39,7 +41,7 @@ func CreateUpstream(c *gin.Context) {
 	filterCursor, err := collection.Find(context.TODO(), filter)
 	var result []bson.M
 	if err = filterCursor.All(context.TODO(), &result); err != nil {
-		log.Fatal(err)
+		global.Logger.Errorf("mongo filterCursor. err: [%s]", err.Error())
 	}
 	if result != nil {
 		response.FailWithMessage("upstream已存在:"+postData.Name, c)
@@ -56,10 +58,17 @@ func CreateUpstream(c *gin.Context) {
 		Version:    1,
 		Time:       time.Now(),
 		FilePath:   filepath + "/" + postData.Name + ".conf"}
-	collection.InsertOne(context.TODO(), doc)
+	var res interface{}
+	res, err = collection.InsertOne(context.TODO(), doc)
+	if err != nil {
+		response.FailWithMessage("插入数据库异常", c)
+		global.Logger.Errorf("insert to mongo failed. err: [%s]", err.Error())
+	}
+
+	global.Logger.Infof("insert to mongo success. result: %s", res)
 	err = os.MkdirAll(filepath, 0755)
 	if err != nil {
-		log.Fatal(err)
+		global.Logger.Errorf("os.MkdirAll. err: [%s]", err.Error())
 	}
 	var confTmp string
 	if postData.Forward == "chash" {
@@ -90,26 +99,72 @@ func CreateUpstream(c *gin.Context) {
 	}
 
 	f, err := os.OpenFile(filepath+"/"+postData.Name+".conf",
-		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
+		global.Logger.Errorf("open file failed. err: [%s]", err.Error())
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 	defer f.Close()
 	if _, err := f.WriteString(confTmp + "\n"); err != nil {
+		global.Logger.Errorf("write upstream conf [%s] to file [%s] failed %s. err: [%s]", confTmp, f, err.Error())
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+	db := global.DB
+	var hosts []model.Host
 
-	//err = ioutil.WriteFile(filepath+"/"+postData.Name+".conf", []byte(confTmp), 0644)
-	//if err != nil {
-	//	response.FailWithMessage(err.Error(), c)
-	//	return
-	//}
+	db.Where("env = ? AND cluster = ?", postData.Env, postData.Cluster).Find(&hosts)
+	ipstr := ""
+	for _, v := range hosts {
+		ipstr += v.Ip + ","
+	}
+	remotePath := global.CONFIG.System.RemotePath
+	args := fmt.Sprintf("src=%s dest=%s", doc.FilePath, remotePath+"/upstream")
+	ansibleAdhocOptions := &adhoc.AnsibleAdhocOptions{
+		Inventory:  ipstr,
+		ModuleName: "synchronize",
+		Args:       args,
+	}
+
+	adhoc := &adhoc.AnsibleAdhocCmd{
+		Pattern: "all",
+		Options: ansibleAdhocOptions,
+	}
+
+	fmt.Println("adhoc:", adhoc.String())
+	err = adhoc.Run(context.TODO())
+	if err != nil {
+		global.Logger.Errorf("ansible adhoc run error,%s ", err.Error())
+	}
+	global.Logger.Infof("create upstream success,%s ", doc)
 	response.OkWithMessage("success", c)
 }
 func UpdateUpstream(c *gin.Context) {
-	response.FailWithMessage("解析失败", c)
+	type requestData struct {
+		Id            string             `json:"id"`
+		NewServerList []model.ServerList `json:"form"`
+	}
+	var postData requestData
+	if err := c.ShouldBindJSON(&postData); err != nil {
+		global.Logger.Errorf("c.ShouldBindJSON failed. err: [%s]", err.Error())
+		response.FailWithMessage("请求数据异常", c)
+		return
+	}
+
+	collection := global.Mogo.Database("slb").Collection("upstream")
+	id, _ := primitive.ObjectIDFromHex(postData.Id)
+	result, err := collection.UpdateOne(
+		context.TODO(),
+		bson.M{"_id": id},
+		bson.M{"$set": bson.M{"serverlist": postData.NewServerList}},
+	)
+	if err != nil {
+		global.Logger.Errorf("update upstream failed, err:[%s] ", err.Error())
+		response.FailWithMessage(err.Error(), c)
+	}
+	global.Logger.Infof("update upstream success, err:[%s] ", result)
+	response.OkWithMessage("更新成功", c)
 }
 
 func DeleteUpstream(c *gin.Context) {
@@ -117,17 +172,28 @@ func DeleteUpstream(c *gin.Context) {
 		Id       string `json:"id"`
 		FilePath string `json:"filepath"`
 	}
+
 	var postData requestData
 	if err := c.ShouldBindJSON(&postData); err != nil {
+		global.Logger.Errorf("c.ShouldBindJSON failed. err: [%s]", err.Error())
 		response.FailWithMessage("请求数据异常", c)
 		return
 	}
 	collection := global.Mogo.Database("slb").Collection("upstream")
 
-	idPrimitive, err := primitive.ObjectIDFromHex(postData.Id)
+	idPrimitive, _ := primitive.ObjectIDFromHex(postData.Id)
+
+	// 根据id获取upstream的env和cluster等信息，生成ansible语句
+	result := collection.FindOne(context.Background(), bson.M{"_id": idPrimitive})
+	doc1 := model.UpstreamDoc{}
+	result.Decode(doc1)
+	env := doc1.Env
+	cluster := doc1.Cluster
+	name := doc1.Name
 
 	res, err := collection.DeleteOne(context.TODO(), bson.M{"_id": idPrimitive})
 	if err != nil {
+		global.Logger.Errorf("delete upstream failed, err:[%s] ", err.Error())
 		response.FailWithMessage("删除失败", c)
 		return
 	}
@@ -137,9 +203,38 @@ func DeleteUpstream(c *gin.Context) {
 	} else {
 		err = os.Remove(postData.FilePath)
 		if err != nil {
+			global.Logger.Errorf("delete upstream file failed, err:[%s] ", err.Error())
 			response.FailWithMessage(err.Error(), c)
-			return
 		}
+
+		db := global.DB
+		var hosts []model.Host
+
+		db.Where("env = ? AND cluster = ?", env, cluster).Find(&hosts)
+		ipstr := ""
+		for _, v := range hosts {
+			ipstr += v.Ip + ","
+		}
+		remotePath := global.CONFIG.System.RemotePath
+		args := fmt.Sprintf("dest=%s state=absent", remotePath+"/upstream/"+name+".conf")
+		ansibleAdhocOptions := &adhoc.AnsibleAdhocOptions{
+			Inventory:  ipstr,
+			ModuleName: "ansible.builtin.file",
+			Args:       args,
+		}
+
+		adhoc := &adhoc.AnsibleAdhocCmd{
+			Pattern: "all",
+			Options: ansibleAdhocOptions,
+		}
+
+		fmt.Println("adhoc:", adhoc.String())
+		err = adhoc.Run(context.TODO())
+		if err != nil {
+			global.Logger.Errorf("ansible adhoc run error,%s ", err.Error())
+		}
+
+		global.Logger.Infof("delete upstream success, name: [%s] ", name)
 		response.OkWithMessage("删除成功", c)
 	}
 }
@@ -155,6 +250,7 @@ func GetUpstreamList(c *gin.Context) {
 
 	var postData requestData
 	if err := c.ShouldBindJSON(&postData); err != nil {
+		global.Logger.Errorf("c.ShouldBindJSON failed. err: [%s]", err.Error())
 		response.FailWithMessage("请求数据异常", c)
 	}
 	collection := global.Mogo.Database("slb").Collection("upstream")
@@ -177,14 +273,14 @@ func GetUpstreamList(c *gin.Context) {
 			"$elemMatch": bson.M{"args": postData.Name}}})
 	}
 
-	count, err := collection.CountDocuments(context.TODO(), filter)
-	filterCursor, err := collection.Find(context.TODO(), filter, findOptions)
+	count, _ := collection.CountDocuments(context.TODO(), filter)
+	filterCursor, _ := collection.Find(context.TODO(), filter, findOptions)
 
 	var result []bson.M
-	if err = filterCursor.All(context.TODO(), &result); err != nil {
-		log.Fatal(err)
+	if err := filterCursor.All(context.TODO(), &result); err != nil {
+		global.Logger.Errorf("mongo filterCursor. err: [%s]", err.Error())
 	}
-
+	global.Logger.Info("get upstream list success")
 	response.OkWithData(resp.PageResult{
 		List:     result,
 		Total:    count,

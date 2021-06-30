@@ -7,6 +7,7 @@ export const login = (data) => {
         data: data
     })
 }
+
 export const getUserList = (data) => {
     return service({
         url: "/user/getUserList",

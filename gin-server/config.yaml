@@ -1,40 +1,44 @@
 # zap logger configuration
 zap:
-  level: 'info'
-  format: 'console'
-  prefix: '[GIN-VUE-ADMIN]'
-  director: 'log'
-  link-name: 'latest_log'
+  level: "info"
+  format: "console"
+  prefix: "[GIN-VUE-ADMIN]"
+  director: "log"
+  link-name: "latest_log"
   show-line: true
-  encode-level: 'LowercaseColorLevelEncoder'
-  stacktrace-key: 'stacktrace'
+  encode-level: "LowercaseColorLevelEncoder"
+  stacktrace-key: "stacktrace"
   log-in-console: true
 
 # redis configuration
 redis:
   db: 0
-  addr: '127.0.0.1:6379'
-  password: 'Qwer4321!'
-
-# casbin configuration
-casbin:
-  model-path: './resource/rbac_model.conf'
+  addr: "127.0.0.1:6379"
+  password: "Qwer4321!"
 
 # mysql connect configuration
 mysql:
-  path: '127.0.0.1:3306'
-  config: 'charset=utf8mb4&parseTime=True&loc=Local'
-  db-name: 'slb-admin'
-  username: 'root'
-  password: 'pangru123'
+  path: "127.0.0.1:3306"
+  config: "charset=utf8mb4&parseTime=True&loc=Local"
+  db-name: "slb-admin"
+  username: "root"
+  password: "pangru123"
 
+# mongo configuration
 mongo:
-  host: '10.0.0.10'
-  port: '27017'
-  username: 'admin'
-  password: '123'
-  db-name: 'slb'
+  host: "10.0.0.10"
+  port: "27017"
+  username: "admin"
+  password: "123"
+  db-name: "slb"
 
 # system configuration
 system:
-  path: '/Users/pangru/Documents/tmp/files'
+  path: "/Users/pangru/Documents/tmp/files"
+  remotepath: "/wls/openresty/nginx/conf"
+
+# nginx server configuration
+ssh:
+  user: "root"
+  port: "22"
+  keypath: "/Users/pangru/.ssh/id_rsa"

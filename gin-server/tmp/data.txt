@@ -1,14 +1,14 @@
 http {
 server {
-        listen      443 ;
-        server_name  append3.com;
+        listen      80 ;
+        server_name  aaa.top;
 
 
         location /  {
-            123  ;
+            1234  ;
         }
 
-        access_log /wls/applogs/nginx/append3.com.access.log main;
-        error_log /wls/applogs/nginx/append3.com.error.log warn;
+        access_log /wls/applogs/nginx/aaa.top.access.log main;
+        error_log /wls/applogs/nginx/aaa.top.error.log warn;
 }
 }

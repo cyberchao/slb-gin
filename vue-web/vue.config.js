@@ -13,6 +13,7 @@ module.exports = {
     lintOnSave: process.env.NODE_ENV === 'development',
     productionSourceMap: false,
     devServer: {
+        hot: true,
         port: 8080,
         open: true,
         overlay: {
@@ -33,6 +34,9 @@ module.exports = {
     },
     configureWebpack: {
         //    @路径走src文件夹
+        externals: {
+            'jquery' : '$',
+        },
         resolve: {
             alias: {
                 '@': resolve('src')

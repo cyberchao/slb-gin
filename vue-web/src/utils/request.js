@@ -60,10 +60,12 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     response => {
         closeLoading()
+        console.log(response)
         if (response.headers["new-token"]) {
             store.commit('user/setToken', response.headers["new-token"])
         }
-        if (response.data.code == 0 || response.headers.success === "true") {
+        if (response.data.code == 0) {
+            console.log(response.data)
             return response.data
         } else {
             Message({
@@ -72,6 +74,7 @@ service.interceptors.response.use(
                 type: 'error',
             })
             if (response.data.data && response.data.data.reload) {
+                console.log("resp:",response.data.data)
                 store.commit('user/LoginOut')
             }
             return response.data.msg ? response.data : response

@@ -1,14 +1,18 @@
 package v1
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"slb-admin/global"
 	"slb-admin/global/response"
 	"slb-admin/model"
 	resp "slb-admin/model/response"
+	"slb-admin/service"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // @Tags nginx_host
@@ -42,7 +46,30 @@ func CreateHost(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"nginx语法检查成功"}"
 // @Router /role/deleteRole [post]
 func CheckHost(c *gin.Context) {
-	response.FailWithMessage("解析失败", c)
+	var postData []string
+	if err := c.ShouldBindJSON(&postData); err != nil {
+		global.Logger.Errorf("c.ShouldBindJSON failed. err: [%s]", err.Error())
+		response.FailWithMessage("请求数据异常", c)
+	}
+	res, err := service.SshWoker(postData, "/wls/openresty/nginx/sbin/nginx -t")
+	if err != nil {
+		global.Logger.Errorf("ssh err. err: [%s]", err.Error())
+		response.FailWithMessage("内部错误", c)
+	}
+	for ip, out := range res {
+		if strings.Contains(out, "syntax is ok") {
+			delete(res, ip)
+		}
+	}
+	if len(res) == 0 {
+
+		global.Logger.Infof("ssh res: [%s]", res)
+		response.OkWithMessage("检查通过", c)
+	} else {
+		jsonString, _ := json.Marshal(res)
+		global.Logger.Infof("ssh res: [%s]", res)
+		response.FailWithMessage(string(jsonString), c)
+	}
 }
 
 // @Tags nginx_host
@@ -53,7 +80,29 @@ func CheckHost(c *gin.Context) {
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"nginx reload成功"}"
 // @Router /role/deleteRole [post]
 func ReloadHost(c *gin.Context) {
-	response.FailWithMessage("解析失败", c)
+	var postData []string
+	if err := c.ShouldBindJSON(&postData); err != nil {
+		global.Logger.Errorf("c.ShouldBindJSON failed. err: [%s]", err.Error())
+		response.FailWithMessage("请求数据异常", c)
+	}
+	res, err := service.SshWoker(postData, "/wls/openresty/nginx/sbin/nginx -s reload")
+	if err != nil {
+		global.Logger.Errorf("ssh err. err: [%s]", err.Error())
+		response.FailWithMessage("内部错误", c)
+	}
+	for ip, out := range res {
+		if out == "" {
+			delete(res, ip)
+		}
+	}
+	if len(res) == 0 {
+		global.Logger.Infof("ssh res: [%s]", res)
+		response.OkWithMessage("Reload 成功", c)
+	} else {
+		jsonString, _ := json.Marshal(res)
+		global.Logger.Infof("ssh res: [%s]", res)
+		response.FailWithMessage(string(jsonString), c)
+	}
 }
 
 // @Tags 删除主机

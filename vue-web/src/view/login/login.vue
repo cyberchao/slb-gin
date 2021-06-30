@@ -83,8 +83,8 @@ export default {
       curYear: 0,
       lock: "lock",
       loginForm: {
-        username: "admin",
-        password: "123456",
+        username: "",
+        password: "",
         iotp: "",
       },
       rules: {

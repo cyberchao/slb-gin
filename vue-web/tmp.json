@@ -1,0 +1,109 @@
+{
+    "status": "ok",
+    "errors": [],
+    "config": [
+        {
+            "file": "yqb.com.conf",
+            "status": "ok",
+            "errors": [],
+            "parsed": [
+                {
+                    "directive": "http",
+                    "line": 1,
+                    "args": [],
+                    "block": [
+                        {
+                            "directive": "server",
+                            "line": 2,
+                            "args": [],
+                            "block": [
+                                {
+                                    "directive": "listen",
+                                    "line": 3,
+                                    "args": [
+                                        "443",
+                                        "ssl"
+                                    ]
+                                },
+                                {
+                                    "directive": "server_name",
+                                    "line": 4,
+                                    "args": [
+                                        "caiku.yqb.com"
+                                    ]
+                                },
+                                {
+                                    "directive": "include",
+                                    "line": 6,
+                                    "args": [
+                                        "/wls/nginx/nginx/conf/basic/refuse.conf"
+                                    ]
+                                },
+                                {
+                                    "directive": "include",
+                                    "line": 7,
+                                    "args": [
+                                        "/wls/nginx/nginx/conf/basic/gray.conf"
+                                    ]
+                                },
+                                {
+                                    "directive": "include",
+                                    "line": 8,
+                                    "args": [
+                                        "/wls/nginx/nginx/conf/basic/yqb.com_ssl.conf"
+                                    ]
+                                },
+                                {
+                                    "directive": "location",
+                                    "line": 9,
+                                    "args": [
+                                        "/"
+                                    ],
+                                    "block": [
+                                        {
+                                            "directive": "proxy_pass",
+                                            "line": 10,
+                                            "args": [
+                                                "http://fcsmbiz-http"
+                                            ]
+                                        },
+                                        {
+                                            "directive": "include",
+                                            "line": 11,
+                                            "args": [
+                                                "/wls/nginx/nginx/conf/basic/method_options_server.conf"
+                                            ]
+                                        },
+                                        {
+                                            "directive": "include",
+                                            "line": 12,
+                                            "args": [
+                                                "/wls/nginx/nginx/conf/basic/proxybasic.conf"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "directive": "access_log",
+                                    "line": 15,
+                                    "args": [
+                                        "/wls/applogs/nginx/caiku.yqb.com.access.log",
+                                        "main"
+                                    ]
+                                },
+                                {
+                                    "directive": "error_log",
+                                    "line": 16,
+                                    "args": [
+                                        "/wls/applogs/nginx/caiku.yqb.com.error.log",
+                                        "warn"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

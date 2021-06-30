@@ -7,30 +7,23 @@ import (
 	"slb-admin/initialize"
 )
 
-// @title Swagger Example API
-// @version 0.0.1
-// @description This is a sample Server pets
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name x-token
-// @BasePath /
 func main() {
+	// 初始化配置文件
 	global.VP = core.Viper("./config.yaml")
-	global.DB = initialize.GormMysql()
+	// 初始化mongodb
 	global.Mogo = initialize.Mongo()
+	// 初始化mysql
+	global.DB = initialize.GormMysql()
 	initialize.MysqlTables(global.DB)
-	initialize.Redis()
 	db, _ := global.DB.DB()
 	defer db.Close()
-
-	//test.Cross()
-
+	// 初始化redis
+	initialize.Redis()
+	// 初始化日志
+	initialize.InitLogger()
+	defer global.Logger.Sync()
+	// 初始化路由
 	Router := initialize.Routers()
-	//s := endless.NewServer(":8080", Router)
-	//s.ReadHeaderTimeout = 10 * time.Millisecond
-	//s.WriteTimeout = 10 * time.Second
-	//s.MaxHeaderBytes = 1 << 20
-	//s.ListenAndServe()
-	//Router.Run(":8082")
+	// 启动http服务
 	http.ListenAndServe(":8080", Router)
 }

@@ -4,14 +4,7 @@ import { store } from '@/store/index'
 let asyncRouterFlag = 0
 
 const whiteList = ['login']
-const formatRouter = (routes) => {
-    routes && routes.map(item => {
-        item.meta = Object.assign({}, item.meta ? item.meta : {}, { title: item.title ? item.title : '' })
-        if (item.children && item.children.length > 0) {
-            formatRouter(item.children)
-        }
-    })
-}
+
 
 router.beforeEach(async(to, from, next) => {
     const token = store.getters['user/token']

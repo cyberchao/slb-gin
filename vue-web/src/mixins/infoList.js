@@ -5,7 +5,7 @@ export default {
             total: 10,
             pageSize: 10,
             tableData: [],
-            searchInfo: {}
+            searchInfo: {},
         }
     },
     methods: {
