@@ -1,14 +1,16 @@
 http {
-server {
-        listen      80 ;
-        server_name  aaa.top;
+server
+{
+	listen 8080 ;
+	server_name 10.0.0.10;
 
 
-        location /  {
-            1234  ;
-        }
+	location /
+	{
+		proxy_pass http://simple/ ;
+	}
 
-        access_log /wls/applogs/nginx/aaa.top.access.log main;
-        error_log /wls/applogs/nginx/aaa.top.error.log warn;
+	access_log /wls/applogs/nginx/10.0.0.10.access.log main;
+	error_log /wls/applogs/nginx/10.0.0.10.error.log warn;
 }
 }

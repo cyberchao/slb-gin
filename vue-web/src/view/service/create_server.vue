@@ -116,17 +116,25 @@
           <div id="app">
             <el-button-group>
               <el-button type="primary" icon="el-icon-view">检查</el-button>
+              <el-button @click="beautify()" type="primary" icon="el-icon-view"
+                >格式化</el-button
+              >
               <el-button
                 type="primary"
                 icon="el-icon-paperclip"
                 @click="save('form')"
                 >保存</el-button
               >
-              <el-button type="primary" icon="el-icon-upload">发布</el-button>
+              <el-button
+                @click="publishServer()"
+                type="primary"
+                icon="el-icon-upload"
+                >发布</el-button
+              >
             </el-button-group>
             <prism-editor
               class="my-editor height-300"
-              v-model="text"
+              v-model="code"
               :highlight="highlighter"
               :line-numbers="lineNumbers"
             ></prism-editor>
@@ -149,7 +157,10 @@ import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-funky.css"; // import syntax highlighting styles
-import { createServer } from "@/api/server";
+import { createServer, publishServer } from "@/api/server";
+
+import Beautify from "@/api/nginx";
+const instance = new Beautify({ tabs: 1 });
 
 const nginx_clusters = [
   {
@@ -213,7 +224,8 @@ export default {
       envs: envs,
       description: "",
       version: 1,
-      text: "",
+      code: "",
+      publishData: {},
       // locstring:"",
       rules: {
         cluster: [
@@ -227,7 +239,7 @@ export default {
       },
     };
   },
-  watch: {
+  computed: {
     locstring: function() {
       var locstr = "";
       for (const loc of this.locs) {
@@ -238,28 +250,73 @@ export default {
       }
       return locstr;
     },
-    code: {
-      get: function() {
-        let tmp = `server {
-        listen      ${this.form.listen} ${this.form.ssl ? "ssl" : ""};
-        server_name  ${this.form.server_name};
-${this.form.other}
-${this.locstring}
-        access_log /wls/applogs/nginx/${this.form.server_name}.access.log main;
-        error_log /wls/applogs/nginx/${this.form.server_name}.error.log warn;
-}`;
-        this.text = tmp;
-        return tmp;
-      },
+    // code1: {
+    //   get: function () {
 
-      set: function(v) {
-        console.log(v);
-        this.coder = v;
-        return v;
-      },
+    //     return tmp;
+    //   },
+
+    //   // set: function (v) {
+    //   //   console.log(v);
+    //   //   this.code = v;
+    //   //   return v;
+    //   // },
+    // },
+  },
+  mounted: function() {
+    this.code = `server {
+                listen      ${this.form.listen} ${this.form.ssl ? "ssl" : ""};
+                server_name  ${this.form.server_name};
+        ${this.form.other}
+        ${this.locstring}
+                access_log /wls/applogs/nginx/${
+                  this.form.server_name
+                }.access.log main;
+                error_log /wls/applogs/nginx/${
+                  this.form.server_name
+                }.error.log warn;
+        }`;
+  },
+  watch: {
+    "form.listen"(n) {
+      this.handleCode("this.form.listen", n);
+    },
+    "form.ssl"(n) {
+      this.handleCode("this.form.ssl", n);
+    },
+    "form.server_name"(n) {
+      this.handleCode("this.form.server_name", n);
+    },
+    locstring(n) {
+      this.handleCode("this.locstring", n);
+    },
+    "form.other"(n) {
+      this.handleCode("this.form.other", n);
     },
   },
   methods: {
+    handleCode(str, val) {
+      let temp = `server {
+                listen      ${this.form.listen} ${this.form.ssl ? "ssl" : ""};
+                server_name  ${this.form.server_name};
+        ${this.form.other}
+        ${this.locstring}
+                access_log /wls/applogs/nginx/${
+                  this.form.server_name
+                }.access.log main;
+                error_log /wls/applogs/nginx/${
+                  this.form.server_name
+                }.error.log warn;
+        }`;
+      const codetext = temp.replace(str, val);
+
+      this.code = instance.parse(codetext);
+
+      // console.log(chromatastic);
+    },
+    beautify() {
+      this.code = instance.parse(this.code);
+    },
     highlighter(code) {
       return highlight(code, languages.js); //returns html
     },
@@ -288,9 +345,11 @@ ${this.locstring}
             verison: this.verison,
             filename: filename,
           };
-          console.log(postdata);
           createServer(postdata).then((res) => {
             if (res.code == 0) {
+              console.log("res", res);
+              this.id = res.data.id;
+              this.filepath = res.data.filepath;
               this.$message({
                 type: "success",
                 message: "保存成功!",
@@ -298,11 +357,23 @@ ${this.locstring}
             }
           });
         } else {
-          alert(this.form.env);
           console.log("error submit!!");
           return false;
         }
       });
+    },
+    async publishServer() {
+      this.publishData["id"] = this.Id;
+      this.publishData["filepath"] = this.filepath;
+      this.publishData["env"] = this.form.env;
+      this.publishData["cluster"] = this.form.cluster;
+      const res = await publishServer(this.publishData);
+      if (res.code == 0) {
+        this.$message({
+          type: "success",
+          message: res.msg,
+        });
+      }
     },
     // save() {
     //   var postdata = {
@@ -343,7 +414,7 @@ ${this.locstring}
   color: #ccc;
 
   font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
-  font-size: 14px;
+  font-size: 30px;
   line-height: 1.5;
   padding: 5px;
 }
@@ -355,6 +426,6 @@ ${this.locstring}
 
 // not required:
 .height-300 {
-  height: 60%;
+  height: 100%;
 }
 </style>

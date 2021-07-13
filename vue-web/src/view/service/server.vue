@@ -123,6 +123,9 @@
       <div id="app">
         <el-button-group>
           <el-button type="primary" icon="el-icon-view">检查</el-button>
+          <el-button @click="beautify()" type="primary" icon="el-icon-view"
+            >格式化</el-button
+          >
           <el-button
             type="primary"
             icon="el-icon-paperclip"
@@ -185,6 +188,9 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-funky.css"; // import syntax highlighting styles
 
+import Beautify from "@/api/nginx";
+const instance = new Beautify({ tabs: 1 });
+
 export default {
   name: "Server",
   components: {
@@ -217,6 +223,9 @@ export default {
     };
   },
   methods: {
+    beautify() {
+      this.servermodify.newcode = instance.parse(this.servermodify.newcode);
+    },
     handleSizeChange(val) {
       this.pageSize = val;
       this.getTableData();
@@ -380,6 +389,7 @@ export default {
         });
       }
     },
+
     async enterDialog() {
       this.$refs.apiForm.validate(async (valid) => {
         if (valid) {

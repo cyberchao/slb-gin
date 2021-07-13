@@ -19,9 +19,8 @@ func GetMenu(c *gin.Context) {
 	global.DB.Where("username = ?", username).First(&user)
 	err, menus := service.GetMenuTree(user.RoleId)
 	if err != nil {
-		response.FailWithMessage(fmt.Sprintf("获取失败qqq，%v", err), c)
+		response.FailWithMessage(fmt.Sprintf("获取失败，%v", err), c)
 	} else {
-		fmt.Print(menus)
 		response.OkWithData(MenusResponse{Menus: menus}, c)
 	}
 

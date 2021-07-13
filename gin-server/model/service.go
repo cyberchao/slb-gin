@@ -1,6 +1,10 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Host struct {
 	ID          int    `json:"id" gorm:"AUTO_INCREMENT"`
@@ -12,15 +16,16 @@ type Host struct {
 }
 
 type VhostDoc struct {
-	Env         string      `json:"env"`
-	Cluster     string      `json:"cluster"`
-	Ngx         interface{} `json:"ngx"`
-	Src         string      `json:"src"`
-	Description string      `json:"description"'`
-	Status      bool        `json:"status"'`
-	Version     int         `json:"version"`
-	Time        time.Time   `json:"time"`
-	FilePath    string      `json:"filepath"`
+	Id          primitive.ObjectID `bson:"_id"`
+	Env         string             `json:"env"`
+	Cluster     string             `json:"cluster"`
+	Ngx         interface{}        `json:"ngx"`
+	Src         string             `json:"src"`
+	Description string             `json:"description"'`
+	Status      bool               `json:"status"'`
+	Version     int                `json:"version"`
+	Time        time.Time          `json:"time"`
+	FilePath    string             `json:"filepath"`
 }
 
 type ServerList struct {

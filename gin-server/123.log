@@ -1,1 +1,0 @@
-2021-06-29T19:12:16.051+0800	INFO	v1/upstream.go:109	create upstream success,{hd nginx-ssl erere [{1.1.2.2 80  up}] chash %!s(int=1) 2021-06-29 19:12:16.047725 +0800 CST m=+40.860178056 /Users/pangru/Documents/tmp/files/hd/nginx-ssl/upstream/erere.conf} 

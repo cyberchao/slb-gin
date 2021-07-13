@@ -1,0 +1,30 @@
+{
+    "_id": ObjectId("60e576c24b9fdd3d4f39f459"),
+    "env": "uat",
+    "cluster": "nginx-bc",
+    "name": "test1",
+    "serverlist": [
+        {
+            "ip": "10.0.0.1",
+            "port": "80",
+            "weight": "10",
+            "status": "up"
+        },
+        {
+            "ip": "10.0.0.2",
+            "port": "80",
+            "weight": "10",
+            "status": "up"
+        },
+        {
+            "ip": "10.0.0.3",
+            "port": "443",
+            "weight": "20",
+            "status": "down"
+        }
+    ],
+    "forward": "chash",
+    "version": 1,
+    "time": ISODate("2021-07-07T09:41:22.066Z"),
+    "filepath": "/Users/pangru/Documents/tmp/files/uat/nginx-bc/upstream/test1.conf"
+}

@@ -39,6 +39,10 @@ func CreateServer(c *gin.Context) {
 		Version     int    `json:"version"`
 		FileName    string `json:"filename"`
 	}
+	type responseData struct {
+		Id       string `json:"id"`
+		FilePath string `json:"filepath"`
+	}
 
 	var postData requestData
 	if err := c.ShouldBindJSON(&postData); err != nil {
@@ -102,7 +106,9 @@ func CreateServer(c *gin.Context) {
 
 			basepath := global.CONFIG.System.Path
 			filepath := fmt.Sprintf("%s/%s/%s/vhost", basepath, postData.Env, postData.Cluster)
+			id := primitive.NewObjectID()
 			doc := model.VhostDoc{
+				Id:          id,
 				Env:         postData.Env,
 				Cluster:     postData.Cluster,
 				Ngx:         ngxdoc,
@@ -112,6 +118,7 @@ func CreateServer(c *gin.Context) {
 				Version:     postData.Version,
 				Time:        time.Now(),
 				FilePath:    filepath + "/" + postData.FileName}
+			fmt.Println(doc)
 			collection.InsertOne(context.TODO(), doc)
 			err := os.MkdirAll(filepath, 0755)
 			if err != nil {
@@ -129,12 +136,9 @@ func CreateServer(c *gin.Context) {
 				response.FailWithMessage(err.Error(), c)
 				return
 			}
-			//err = ioutil.WriteFile(filepath+"/"+postData.FileName, []byte(ngxConf), 0644)
-			//if err != nil {
-			//	log.Fatal(err)
-			//}
-
-			response.OkWithMessage("success", c)
+			//If you want a string representation of this MongoDB ObjectId, you may use its ObjectID.Hex() method to get the hex representation of the ObjectId's bytes
+			//https://stackoverflow.com/questions/60864873/primitive-objectid-to-string-in-golang
+			response.OkWithData(doc, c)
 		} else {
 			response.FailWithMessage("格式错误-0", c)
 		}
@@ -344,7 +348,7 @@ func PublishServer(c *gin.Context) {
 	if err := c.ShouldBindJSON(&postData); err != nil {
 		response.FailWithMessage("请求数据异常", c)
 	}
-
+	fmt.Println(postData)
 	db := global.DB
 	var hosts []model.Host
 
@@ -353,8 +357,12 @@ func PublishServer(c *gin.Context) {
 	for _, v := range hosts {
 		ipstr += v.Ip + ","
 	}
+	if ipstr == "" {
+		response.FailWithMessage("host is empty", c)
+		return
+	}
 	remotePath := global.CONFIG.System.RemotePath
-	args := fmt.Sprintf("src=%s dest=%s", postData.Filepath, remotePath)
+	args := fmt.Sprintf("src=%s dest=%s", postData.Filepath, remotePath+"/vhost")
 
 	ansibleAdhocOptions := &adhoc.AnsibleAdhocOptions{
 		Inventory:  ipstr,
