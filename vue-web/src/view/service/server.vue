@@ -95,7 +95,7 @@
             >删除</el-button
           >
           <el-button
-            @click="logServer(scope.row)"
+            @click="openlogwindow(scope.row)"
             size="small"
             type="info"
             icon="el-icon-edit"
@@ -146,7 +146,6 @@
           :line-numbers="lineNumbers"
         ></prism-editor>
       </div>
-      <div class="warning">新增Api需要在角色管理内配置权限才可使用</div>
       <div class="dialog-footer" slot="footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button @click="enterDialog" type="primary">确 定</el-button>
@@ -161,9 +160,31 @@
     >
       <el-tabs type="border-card">
         <el-tab-pane label="菜单">
-          <span>{{ activeRow }}</span>
+          <el-form :inline="true" :model="logInfo" class="demo-form-inline">
+            <el-form-item label="类型">
+              <el-select v-model="logInfo.type" placeholder="选择">
+                <el-option value="access"> </el-option>
+                <el-option value="error"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="过滤">
+              <el-input placeholder="关键字" v-model="logInfo.key"></el-input>
+            </el-form-item>
+
+            <el-form-item>
+              <el-button @click="openws()" type="primary">确定</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="flush()" type="primary">清空</el-button>
+            </el-form-item>
+          </el-form>
         </el-tab-pane>
       </el-tabs>
+      <prism-editor
+        class="my-editor"
+        v-model="receiveData"
+        :highlight="highlighter"
+      ></prism-editor>
     </el-drawer>
   </div>
 </template>
@@ -204,10 +225,11 @@ export default {
       pageSize: 10,
       tableData: [],
       searchInfo: {},
+      logInfo: {},
       serverList: [],
       lineNumbers: true,
       dialogFormVisible: false,
-      dialogTitle: "新增Server",
+      dialogTitle: "修改Server",
       drawer: false,
       activeRow: {},
       form: {
@@ -220,11 +242,16 @@ export default {
       nginx_clusters: this.GLOBAL.nginx_clusters,
       envs: this.GLOBAL.envs,
       type: "",
+      receiveData: "",
+
+      connection: null,
     };
   },
   methods: {
     beautify() {
+      console.log("beautify");
       this.servermodify.newcode = instance.parse(this.servermodify.newcode);
+      console.log(this.servermodify.newcode);
     },
     handleSizeChange(val) {
       this.pageSize = val;
@@ -238,7 +265,7 @@ export default {
       this.serverList = [];
       const table = await getServerList({ page, pageSize, ...this.searchInfo });
       if (table.code == 0) {
-        console.log("response.data", table.data.list);
+        // console.log("response.data", table.data.list);
         this.tableData = table.data.list;
         this.total = table.data.total;
         this.page = table.data.page;
@@ -285,8 +312,8 @@ export default {
               serverRaw.error_log = block.args[0];
             }
           }
-          console.log("server", server);
-          console.log("serverraw:", serverRaw);
+          // console.log("server", server);
+          // console.log("serverraw:", serverRaw);
           this.serverList.push(serverRaw);
         }
       }
@@ -333,9 +360,35 @@ export default {
       this.publishData["cluster"] = row.cluster;
       this.dialogFormVisible = true;
     },
-    logServer(row) {
+    openlogwindow(row) {
       this.drawer = true;
       this.activeRow = row;
+    },
+    openws() {
+      // 作用域问题。把this实例存为_this，回调函数里面就能访问到
+      var _this = this;
+      this.logInfo.env = this.activeRow.env;
+      this.logInfo.cluster = this.activeRow.cluster;
+      this.logInfo.access_log = this.activeRow.access_log;
+      this.logInfo.error_log = this.activeRow.error_log;
+
+      var ws = new WebSocket("ws://localhost:8080/ws");
+      ws.onopen = function() {
+        console.log("Successfully connected to the websocket server...");
+        ws.send(JSON.stringify(_this.logInfo));
+      };
+      ws.onmessage = function(event) {
+        var data = JSON.parse(event.data);
+        var line = `[${data.Host}]:${data.Content}`;
+        _this.receiveData += line;
+        // _this.receiveData.push(data);
+      };
+      ws.onclose = function() {
+        console.log("Connection closed.");
+      };
+    },
+    flush() {
+      this.receiveData = "";
     },
     async editServer(row) {
       this.openDialog(row, "edit");

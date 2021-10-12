@@ -1,9 +1,10 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
-	"slb-admin/api/v1"
+	v1 "slb-admin/api/v1"
 	"slb-admin/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 func InitServiceRouter(Router *gin.RouterGroup) {
@@ -27,5 +28,6 @@ func InitServiceRouter(Router *gin.RouterGroup) {
 		UserRouter.POST("createUpstream", v1.CreateUpstream)
 		UserRouter.POST("updateUpstream", v1.UpdateUpstream)
 		UserRouter.POST("deleteUpstream", v1.DeleteUpstream)
+
 	}
 }

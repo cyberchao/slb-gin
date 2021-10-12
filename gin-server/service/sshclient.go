@@ -48,6 +48,14 @@ func NewSshClient(user string, host string, port int, privateKeyPath string) (*S
 	return client, nil
 }
 
+func (s *SshClient) SshSession() *ssh.Session {
+
+	conn, _ := ssh.Dial("tcp", s.Server, s.Config)
+
+	session, _ := conn.NewSession()
+	return session
+}
+
 func (s *SshClient) RunCommand(cmd string) (string, error) {
 	// open connection
 	conn, err := ssh.Dial("tcp", s.Server, s.Config)

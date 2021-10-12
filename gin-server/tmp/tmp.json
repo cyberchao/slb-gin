@@ -1,0 +1,14 @@
+{
+    "id": "60dc36516f0dea3aa463b8e9",
+    "env": "uat",
+    "cluster": "nginx-ssl",
+    "server_name": "www.aaa.com",
+    "listen": "8080",
+    "access_log": "/wls/applogs/nginx/www.aaa.com.access.log",
+    "error_log": "/wls/applogs/nginx/www.aaa.com.error.log",
+    "src": "server {\n listen 8080 ;\n server_name www.aaa.com;\n\n\n location / {\n 123 ;\n }\n\n access_log /wls/applogs/nginx/www.aaa.com.access.log main;\n error_log /wls/applogs/nginx/www.aaa.com.error.log warn;\n}",
+    "description": "",
+    "status": "已发布",
+    "time": "2021-06-30T17:16:01",
+    "filepath": "/Users/pangru/Documents/tmp/files/uat/nginx-ssl/vhost/www.aaa.com.conf"
+}
